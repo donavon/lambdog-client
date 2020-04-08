@@ -16,7 +16,7 @@ const createMockFetch = (options = {}) => {
       status,
       ok,
       headers: {
-        get: (key) => contentType,
+        get: () => contentType,
       },
       json: () => jsonResult,
       text: () => textResult,
@@ -33,30 +33,31 @@ describe('createProxy', () => {
   });
   it('builds a URL to Netlify', () => {
     const fetch = createMockFetch();
-    const fn = lambdog('foo', { fetch });
+    lambdog('foo', { fetch });
     expect(fetch).toBeCalledWith('/.netlify/functions/foo', {});
   });
   it('builds a URL to Netlify with params in the URL', () => {
     const fetch = createMockFetch();
-    const fn = lambdog('foo/:id', { fetch, params: { id: 123 } });
+    lambdog('foo/:id', { fetch, params: { id: 123 } });
     expect(fetch).toBeCalledWith('/.netlify/functions/foo/123', {});
   });
   it('builds a URL to Netlify with params as a search query', () => {
     const fetch = createMockFetch();
-    const fn = lambdog('foo', { fetch, params: { id: 123 } });
+    lambdog('foo', { fetch, params: { id: 123 } });
     expect(fetch).toBeCalledWith('/.netlify/functions/foo?id=123', {});
   });
   it('JSON encodes data by default', () => {
     const fetch = createMockFetch();
-    const fn = lambdog('foo', { fetch, data: fooBarData });
+    lambdog('foo', { fetch, data: fooBarData });
     expect(fetch).toBeCalledWith('/.netlify/functions/foo', {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(fooBarData),
+      method: 'POST',
     });
   });
   it('does not encode if content-type is NOT application/json', () => {
     const fetch = createMockFetch();
-    const fn = lambdog('foo', {
+    lambdog('foo', {
       fetch,
       headers: { 'content-type': 'text/plain' },
       data: 'this is plain text',
@@ -64,6 +65,22 @@ describe('createProxy', () => {
     expect(fetch).toBeCalledWith('/.netlify/functions/foo', {
       headers: { 'content-type': 'text/plain' },
       body: 'this is plain text',
+      method: 'POST',
+    });
+  });
+
+  it('does not override method (if specified) when data present', () => {
+    const fetch = createMockFetch();
+    lambdog('foo', {
+      fetch,
+      headers: { 'content-type': 'text/plain' },
+      data: 'this is plain text',
+      method: 'FOO',
+    });
+    expect(fetch).toBeCalledWith('/.netlify/functions/foo', {
+      headers: { 'content-type': 'text/plain' },
+      body: 'this is plain text',
+      method: 'FOO',
     });
   });
 
