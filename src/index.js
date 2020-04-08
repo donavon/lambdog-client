@@ -46,7 +46,7 @@ const lambdog = async (name, options = {}) => {
   const url = buildUrl(path, params);
   const fetchOptions = {
     ...(Object.keys(headers).length !== 0 && { headers }), // add if not empty object
-    ...(!!body && { body }), // add if not empty object
+    ...(!!body && { body, method: 'POST' }), // if body not empty add it and default method to POST
     ...rest,
   };
 
