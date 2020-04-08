@@ -47,7 +47,7 @@ console.log(text); // "Hello World"
 hello('World').then(text => console.log(text));
 ```
 
-To pass date, specify the `method` and the `data`. Lambdog will automatically JSON stringify the data on the way out and parse on the way back.
+To pass data, specify the `method` and the `data`. Lambdog will automatically JSON stringify the data on the way out and parse on the way back.
 
 ```js
 const addToto = (data) =>
@@ -57,7 +57,13 @@ const addToto = (data) =>
   });
 ```
 
-Then to update a todo on the server
+or use the convenience function `lambdog.post(name, data, options)`.
+
+```js
+const addToto = (data) => lambdog.post('todo-add', data);
+```
+
+Then to update a todo on the server.
 
 ```js
 const id = await addToto({ text: 'buy milk', completed: false });
@@ -76,6 +82,18 @@ Here are the parameters that you can use.
 
 `lambdog` returns a promise that resolves to the output from your
 Netlify function.
+
+### Convenience functions
+
+Lambdog provides the following convenience functions.
+
+- lambdog.request(options)
+- lambdog.get(name[, options])
+- lambdog.delete(name[, options])
+- lambdog.head(name[, options])
+- lambdog.post(name[, data[, options]])
+- lambdog.put(name[, data[, options]])
+- lambdog.patch(name[, data[, options]])
 
 ### Configuration object
 

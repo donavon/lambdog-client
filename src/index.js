@@ -64,4 +64,22 @@ const lambdog = async (name, options = {}) => {
   throw new Error(message);
 };
 
+// istanbul ignore next
+lambdog.request = async (options = {}) => {
+  const { name, ...rest } = options;
+  return lambdog(name, rest);
+};
+
+// istanbul ignore next
+['get', 'delete', 'head'].forEach((method) => {
+  lambdog[method] = async (name, options = {}) =>
+    lambdog(name, { ...options, method: method.toUpperCase() });
+});
+
+// istanbul ignore next
+['put', 'post', 'patch'].forEach((method) => {
+  lambdog[method] = async (name, data, options = {}) =>
+    lambdog(name, { ...options, data, method: method.toUpperCase() });
+});
+
 export default lambdog;

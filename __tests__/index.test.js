@@ -26,7 +26,7 @@ const createMockFetch = (options = {}) => {
 
 global.fetch = createMockFetch();
 
-describe('createProxy', () => {
+describe('lambdog', () => {
   it('returns a promise', () => {
     const fn = lambdog('foo');
     expect(fn instanceof Promise).toBe(true);
@@ -102,6 +102,80 @@ describe('createProxy', () => {
     it('it throws with the body text as the error message', async () => {
       const fetch = createMockFetch({ ok: false, textResult: 'footext' });
       await expect(lambdog('foo', { fetch })).rejects.toThrow('footext');
+    });
+  });
+});
+
+describe('lambdog.post', () => {
+  it('defaults the method to POST and adds data as a required second argument', () => {
+    const fetch = createMockFetch();
+    lambdog.post('foo', 'data', { fetch });
+    expect(fetch).toBeCalledWith('/.netlify/functions/foo', {
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify('data'),
+      method: 'POST',
+    });
+  });
+});
+
+describe('lambdog.put', () => {
+  it('defaults the method to PUT and adds data as a required second argument', () => {
+    const fetch = createMockFetch();
+    lambdog.put('foo', 'data', { fetch });
+    expect(fetch).toBeCalledWith('/.netlify/functions/foo', {
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify('data'),
+      method: 'PUT',
+    });
+  });
+});
+
+describe('lambdog.patch', () => {
+  it('defaults the method to PATCH and adds data as a required second argument', () => {
+    const fetch = createMockFetch();
+    lambdog.patch('foo', 'data', { fetch });
+    expect(fetch).toBeCalledWith('/.netlify/functions/foo', {
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify('data'),
+      method: 'PATCH',
+    });
+  });
+});
+
+describe('lambdog.request', () => {
+  it('has no name argument, instead use options.name', () => {
+    const fetch = createMockFetch();
+    lambdog.request({ name: 'foo', fetch });
+    expect(fetch).toBeCalledWith('/.netlify/functions/foo', {});
+  });
+});
+
+describe('lambdog.get', () => {
+  it('defaults the method to GET', () => {
+    const fetch = createMockFetch();
+    lambdog.get('foo', { fetch });
+    expect(fetch).toBeCalledWith('/.netlify/functions/foo', {
+      method: 'GET',
+    });
+  });
+});
+
+describe('lambdog.head', () => {
+  it('defaults the method to HEAD', () => {
+    const fetch = createMockFetch();
+    lambdog.head('foo', { fetch });
+    expect(fetch).toBeCalledWith('/.netlify/functions/foo', {
+      method: 'HEAD',
+    });
+  });
+});
+
+describe('lambdog.delete', () => {
+  it('defaults the method to DELETE', () => {
+    const fetch = createMockFetch();
+    lambdog.delete('foo', { fetch });
+    expect(fetch).toBeCalledWith('/.netlify/functions/foo', {
+      method: 'DELETE',
     });
   });
 });
