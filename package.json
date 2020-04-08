@@ -1,0 +1,58 @@
+{
+  "name": "@lambdog/client",
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  },
+  "version": "0.1.0",
+  "description": "It's part lamb. It's part dog. It's lambdog.",
+  "main": "dist/lambdog.js",
+  "umd:main": "dist/lambdog.umd.js",
+  "module": "dist/lambdog.m.js",
+  "source": "src/index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/donavon/lambdog-client.git"
+  },
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "lint": "eslint src",
+    "test": "jest --verbose --coverage --silent",
+    "test:watch": "jest --watch --runInBand --silent",
+    "prebuild": "npm run lint && npm t && rimraf dist",
+    "build": "microbundle --name lambdog -o dist/lambdog.js --sourcemap false --target web",
+    "dev": "microbundle watch -o dist/lambdog.js --sourcemap false --compress false"
+  },
+  "keywords": [
+    "utils",
+    "lib",
+    "lambda",
+    "aws",
+    "netlify",
+    "functions"
+  ],
+  "author": "Donavon West <github@donavon.com> (https://github.com/donavon)",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^25.2.6",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "jest": "^25.2.7",
+    "microbundle": "^0.11.0",
+    "rimraf": "^3.0.2"
+  },
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    }
+  }
+}
