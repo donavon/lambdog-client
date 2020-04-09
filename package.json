@@ -4,7 +4,7 @@
     "access": "public",
     "tag": "latest"
   },
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "It's part lamb. It's part dog. It's lambdog.",
   "main": "dist/lambdog.js",
   "umd:main": "dist/lambdog.umd.js",
