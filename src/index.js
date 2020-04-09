@@ -46,17 +46,25 @@ const lambdog = async (name, options = {}) => {
   const url = buildUrl(path, params);
   const fetchOptions = {
     ...(Object.keys(headers).length !== 0 && { headers }), // add if not empty object
-    ...(!!body && { body, method: 'POST' }), // if body not empty add it and default method to POST
+    ...(!!body && { body, method: 'post' }), // if body not empty add it and default method to POST
     ...rest,
   };
 
   const response = await fetch(url, fetchOptions);
   if (response.ok) {
-    if (response.headers.get(CONTENT_TYPE) === APPLICATION_JSON) {
-      const responseObject = await response.json();
-      return responseObject;
-    }
-    return response.text();
+    const responseData =
+      response.headers.get(CONTENT_TYPE) === APPLICATION_JSON
+        ? await response.json()
+        : await response.text();
+    const { status, statusText, headers: responseHeaders } = response;
+
+    return {
+      status,
+      statusText,
+      headers: Object.fromEntries(responseHeaders.entries()),
+      data: responseData,
+      response,
+    };
   }
 
   // if not OK then throw with text of body as the message
@@ -65,21 +73,19 @@ const lambdog = async (name, options = {}) => {
 };
 
 // istanbul ignore next
-lambdog.request = async (options = {}) => {
-  const { name, ...rest } = options;
-  return lambdog(name, rest);
-};
+lambdog.request = async ({ functionName, ...rest }) =>
+  lambdog(functionName, rest);
 
 // istanbul ignore next
 ['get', 'delete', 'head'].forEach((method) => {
   lambdog[method] = async (name, options = {}) =>
-    lambdog(name, { ...options, method: method.toUpperCase() });
+    (await lambdog(name, { ...options, method })).data;
 });
 
 // istanbul ignore next
 ['put', 'post', 'patch'].forEach((method) => {
   lambdog[method] = async (name, data, options = {}) =>
-    lambdog(name, { ...options, data, method: method.toUpperCase() });
+    (await lambdog(name, { ...options, data, method })).data;
 });
 
 export default lambdog;

@@ -10,6 +10,7 @@
   "umd:main": "dist/lambdog.umd.js",
   "module": "dist/lambdog.m.js",
   "source": "src/index.js",
+  "types": "types/index.d.ts",
   "license": "MIT",
   "repository": {
     "type": "git",
